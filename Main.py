@@ -85,11 +85,10 @@ def send_Kernel(ser_i, kernel_data):
 
     print("finished sending")
 
-    test = ser_i.read(1)
-    print(": %s" % test.encode("hex"))
-
-
-    print("Successfull")
+	# check if Raspberry Pi is sending a charakter after the while-loop
+    #test = ser_i.read(1)
+    #print(": %s" % test.encode("hex"))
+    #print("Successfull")
 
     return True
 
