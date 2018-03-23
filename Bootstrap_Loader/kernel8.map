@@ -1,0 +1,86 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+mbox                0x20              mbox.o
+
+Discarded input sections
+
+ .comment       0x0000000000000000       0x2e uart.o
+ .comment       0x0000000000000000       0x2e main.o
+ .comment       0x0000000000000000       0x2e mbox.o
+
+Speicherkonfiguration
+
+Name             Ursprung           Länge             Attribute
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD start.o
+LOAD uart.o
+LOAD main.o
+LOAD mbox.o
+                0x0000000000080000                . = 0x80000
+                0x0000000000080000                PROVIDE (_code, .)
+
+.text           0x0000000000080000      0x3b8
+ *(.text.boot)
+ .text.boot     0x0000000000080000       0x50 start.o
+                0x0000000000080000                _start
+ *(.text .text.* .gnu.linkonce.t*)
+ .text          0x0000000000080050        0x0 start.o
+ .text          0x0000000000080050      0x15c uart.o
+                0x0000000000080050                uart_init
+                0x0000000000080160                uart_send
+                0x0000000000080188                uart_getc
+ .text          0x00000000000801ac        0x0 main.o
+ *fill*         0x00000000000801ac        0x4 
+ .text.startup  0x00000000000801b0      0x174 main.o
+                0x00000000000801b0                main
+ *fill*         0x0000000000080324        0x4 
+ .text          0x0000000000080328       0x90 mbox.o
+                0x0000000000080328                mbox_call
+
+.iplt           0x00000000000803b8        0x0
+ .iplt          0x00000000000803b8        0x0 start.o
+
+.rela.dyn       0x00000000000803b8        0x0
+ .rela.iplt     0x00000000000803b8        0x0 start.o
+
+.rodata
+ *(.rodata .rodata.* .gnu.linkonce.r*)
+                [!provide]                        PROVIDE (_data, .)
+
+.data           0x00000000000803b8        0x0
+ *(.data .data.* .gnu.linkonce.d*)
+ .data          0x00000000000803b8        0x0 start.o
+ .data          0x00000000000803b8        0x0 uart.o
+ .data          0x00000000000803b8        0x0 main.o
+ .data          0x00000000000803b8        0x0 mbox.o
+
+.igot.plt       0x00000000000803b8        0x0
+ .igot.plt      0x00000000000803b8        0x0 start.o
+
+.bss            0x00000000000803c0       0x20
+                0x00000000000803c0                . = ALIGN (0x10)
+                0x00000000000803c0                __bss_start = .
+ *(.bss .bss.*)
+ .bss           0x00000000000803c0        0x0 start.o
+ .bss           0x00000000000803c0        0x0 uart.o
+ .bss           0x00000000000803c0        0x0 main.o
+ .bss           0x00000000000803c0        0x0 mbox.o
+ *(COMMON)
+ COMMON         0x00000000000803c0       0x20 mbox.o
+                0x00000000000803c0                mbox
+                0x00000000000803e0                __bss_end = .
+                0x00000000000803e0                _end = .
+
+/DISCARD/
+ *(.comment)
+ *(.gnu*)
+ *(.note*)
+ *(.eh_frame*)
+                0x0000000000000004                __bss_size = ((__bss_end - __bss_start) >> 0x3)
+                0x000000000000007c                __loader_size = ((_end - _code) >> 0x3)
+OUTPUT(kernel8.elf elf64-littleaarch64)
